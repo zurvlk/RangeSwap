@@ -1,5 +1,5 @@
-# iskw_gc
-Ishikawaのグラフカットを用いた画像処理プログラム 
+# RangeSwap
+Ishikawaのグラフ+RangeSwapMoveを用いた画像処理プログラム 
 ### 仕様
 Ishikawaのアルゴリズムを基にエネルギーの最小化を試みます.  
 - D<sub>p</sub>(f<sub>p</sub>) = |I<sub>p</sub> - f<sub>p</sub>|
