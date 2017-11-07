@@ -1,5 +1,5 @@
 #include "bmp.h"
-#include "ishikawa.h"
+#include "rangeswap.h"
 #include "graph.h"
 #include <stdlib.h>
 #include <stdio.h>

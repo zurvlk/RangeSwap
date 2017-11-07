@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include "bmp.h"
-#include "ishikawa.h"
+#include "rangeswap.h"
 #include "graph.h"
 #include "ford_fulkerson.h"
 
