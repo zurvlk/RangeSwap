@@ -76,7 +76,8 @@ int main(int argc, char *argv[]) {
     printf("height %ld, width %ld\n", image.height, image.width);
     for (i = 0; i <  image.height; i++) {
         for (j = 0; j < image.width; j++) {
-            I[i * image.width + j + 1] = image.data[i][j].r / scale;
+            if(image.data[i][j].r / scale > label_max) I[i * image.width + j + 1] = label_max;
+            else I[i * image.width + j + 1] = image.data[i][j].r / scale;
         }
     }
 
@@ -123,7 +124,7 @@ int main(int argc, char *argv[]) {
 #endif
 
     num_of_moves = label_size - range_size + 1;
-    last_move = num_of_moves - 1;
+    last_move = num_of_moves;
     decreace = 0;
     flag = 0;
     start = clock();
@@ -132,20 +133,48 @@ int main(int argc, char *argv[]) {
         for(i = 0; i < num_of_moves; i++) {
             alpha = i;
             beta = alpha + range_size - 1;
-            printf("%d alpha: %d beta: %d\n", last_move, alpha, beta);
+            printf("alpha: %d beta: %d\n", alpha, beta);
             if (last_move == i) {
                 flag = 1;
                 break;
             }
-            
             swap_node_size = make_label_index(&Ge, label, label_index, alpha, beta);
+           
+            // for (j = 1; j <= Ge.n - 2; j++) {
+            //     // printf("t[%d] : %d\n", i, t[i]);
+            //     printf("%d ", isin_array(label_index, j, swap_node_size) ? 1 : 0);
+            //     if(j % image.width == 0) printf("\n");
+            //     if(j % (grids_node) == 0) printf("-------------------------------------\n");
+            // }
+
+            if (swap_node_size  < 2) continue;
+
+#if _OUTPUT_T_
+            fprintf(fp, "\n-------------------------------------\n");
+            fprintf(fp, "alpha: %d beta: %d\n", alpha, beta);
+
+            for (j = 1; j <= Ge.n - 2; j++) {
+                // printf("t[%d] : %d\n", i, t[i]);
+                fprintf(fp, "%d ", isin_array(label_index, j, swap_node_size) ? 1 : 0);
+                if(j % image.width == 0) fprintf(fp, "\n");
+                if(j % (grids_node) == 0) fprintf(fp, "-------------------------------------\n");
+            }
+            fprintf(fp, "label: \n");
+            for (j = 1; j <= Ge.n - 2; j++) {
+                // printf("t[%d] : %d\n", i, t[i]);
+                fprintf(fp, "%d ", label[j]);
+                if(j % image.width == 0) fprintf(fp, "\n");
+                if(j % (grids_node) == 0) fprintf(fp, "-------------------------------------\n");
+            }      
+#endif
+        
             
-            node = image.height * image.width * range_size + 1;
+            node = image.height * image.width * (range_size - 1) + 2;
             grids_edge = (image.height - 1) * image.width + image.height * (image.width - 1);
             edge =  2 * ((range_size - 1) * ((range_size - 1) * grids_edge + 2 * grids_node) + grids_node * ((range_size - 1) - 1));
             
             newGraph(&G, node, edge);
-            set_edge(&G, image.height, image.width, alpha, beta, label_index, swap_node_size, I);
+            set_edge(&G, image.height, image.width, alpha, beta, label_size, label, label_index, swap_node_size, I);
             initAdjList(&G);
 
             if ((f = (double *) malloc(sizeof(double) * (G.m + 1))) == NULL) {
@@ -163,15 +192,14 @@ int main(int argc, char *argv[]) {
             boykov_kolmogorov(G, f, t);
             for (j = 1; j <= Ge.n - 2; j++) {
                 if (isin_array(label_index, j, Ge.n - 2)) {
-                    printf("%d is in\n", j);
                     k = j;
                     count = 0;
                     while (t[k] == 1 && k <= (range_size - 1) * grids_node) {
                         k += grids_node;
                         count++;
                     }
-                    newlabel[j] = count + alpha - 1;
-                }
+                    newlabel[j] = count + alpha;
+                } else newlabel[j] = label[j];
             }
 
             if (cmparray(newlabel, label, grids_node)) {
@@ -181,15 +209,6 @@ int main(int argc, char *argv[]) {
             }
 
 #if _OUTPUT_T_
-            fprintf(fp, "\n-------------------------------------\n");
-            fprintf(fp, "alpha: %d beta: %d\n", alpha, beta);
-
-            for (j = 1; j <= Ge.n - 2; j++) {
-                // printf("t[%d] : %d\n", i, t[i]);
-                fprintf(fp, "%d ", isin_array(label_index, j, swap_node_size) ? 1 : 0);
-                if(j % image.width == 0) fprintf(fp, "\n");
-                if(j % (grids_node) == 0) fprintf(fp, "-------------------------------------\n");
-            }
             fprintf(fp, "t: \n");
             for (j = 1; j <= G.n - 2; j++) {
                 // printf("t[%d] : %d\n", i, t[i]);
@@ -207,6 +226,7 @@ int main(int argc, char *argv[]) {
 
             
 #endif
+            // showGraph(&G);
             free(f);
             free(t);
             delGraph(&G);
