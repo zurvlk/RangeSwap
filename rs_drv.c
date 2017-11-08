@@ -7,9 +7,9 @@
 #include "graph.h"
 #include "ford_fulkerson.h"
 
-#define _OUTPUT_T_ 0     // BK-maxflow後のtの状態をファイルに出力 0:出力しない 1:出力する
+#define _OUTPUT_T_ 1     // BK-maxflow後のtの状態をファイルに出力 0:出力しない 1:出力する
 #define _OUTPUT_INFO_ 0     // デバッグ情報出力 0:出力しない 1:出力する
-#define _OUTPUT_GRAPH_ 0    // グラフ情報出力 　0:出力しない 1:出力する
+#define _OUTPUT_GRAPH_ 0    // グラフ情報出力  0:出力しない 1:出力する
 
 int main(int argc, char *argv[]) {
     int i, j, k, node, edge, grids_node, flag, alpha, beta, swap_node_size;
@@ -101,7 +101,8 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "main(): ERROR [label_index = malloc()]\n");
         return (EXIT_FAILURE);
     }
-
+    
+    
     // 輝度から初期ラベル設定
     for (i = 1; i <= grids_node ; i++) label[i] = I[i];
     cpyarray(newlabel, label, grids_node);
@@ -118,15 +119,7 @@ int main(int argc, char *argv[]) {
         if(i % image.width == 0) fprintf(fp, "\n");
         if(i % (grids_node) == 0) fprintf(fp, "-------------------------------------\n");
     }
-    int sum = 0;
-    for (i = 1; i <= Ge.n - 2; i++) {
-        // printf("t[%d] : %d\n", i, t[i]);
-        fprintf(fp, "%d ", I[i]);
-        sum += I[i];
-        if(i % image.width == 0) fprintf(fp, "\n");
-        if(i % (grids_node) == 0) fprintf(fp, "-------------------------------------\n");
-    }
-    fprintf(fp, "Data %d\n", sum);
+
 #endif
 
     num_of_moves = label_size - range_size + 1;
@@ -137,12 +130,14 @@ int main(int argc, char *argv[]) {
     do {
         prev_energy = energy(&Ge, label, I, T);
         for(i = 0; i < num_of_moves; i++) {
+            alpha = i;
+            beta = alpha + range_size - 1;
+            printf("%d alpha: %d beta: %d\n", last_move, alpha, beta);
             if (last_move == i) {
                 flag = 1;
                 break;
             }
-            alpha = i;
-            beta = alpha + range_size - 1;
+            
             swap_node_size = make_label_index(&Ge, label, label_index, alpha, beta);
             
             node = image.height * image.width * range_size + 1;
@@ -150,45 +145,78 @@ int main(int argc, char *argv[]) {
             edge =  2 * ((range_size - 1) * ((range_size - 1) * grids_edge + 2 * grids_node) + grids_node * ((range_size - 1) - 1));
             
             newGraph(&G, node, edge);
-            set_edge(&G, image.height, image.width, alpha, beta, label_index, I);
+            set_edge(&G, image.height, image.width, alpha, beta, label_index, swap_node_size, I);
             initAdjList(&G);
 
-            for (i = 0; i < G.m + 1 ; i++) f[i] = 0;
-            for (i = 0; i < G.n + 1 ; i++) t[i] = 0;
+            if ((f = (double *) malloc(sizeof(double) * (G.m + 1))) == NULL) {
+                fprintf(stderr, "main(): ERROR [f = malloc()]\n");
+                return (EXIT_FAILURE);
+            }
+            if ((t = (int *) malloc(sizeof(int) * (G.n + 1))) == NULL) {
+                fprintf(stderr, "main(): ERROR [t = malloc()]\n");
+                return (EXIT_FAILURE);
+            }
+
+            for (j = 0; j < G.m + 1 ; j++) f[j] = 0;
+            for (j = 0; j < G.n + 1 ; j++) t[j] = 0;
 
             boykov_kolmogorov(G, f, t);
-            for (i = 1; i <= Ge.n - 2; i++) {
-                if (isin_array(newlabel, i, Ge.n - 2)) {
-                    k = i;
+            for (j = 1; j <= Ge.n - 2; j++) {
+                if (isin_array(label_index, j, Ge.n - 2)) {
+                    printf("%d is in\n", j);
+                    k = j;
                     count = 0;
                     while (t[k] == 1 && k <= (range_size - 1) * grids_node) {
                         k += grids_node;
                         count++;
                     }
-                    newlabel[i] = count + alpha - 1;
+                    newlabel[j] = count + alpha - 1;
                 }
             }
 
             if (cmparray(newlabel, label, grids_node)) {
-                last_move = i;
+                last_move = alpha;
                 cpyarray(label, newlabel, grids_node);
+                printf("Energy : %lf\n", energy(&Ge, label, I, T));
             }
 
-            free(G);
+#if _OUTPUT_T_
+            fprintf(fp, "\n-------------------------------------\n");
+            fprintf(fp, "alpha: %d beta: %d\n", alpha, beta);
+
+            for (j = 1; j <= Ge.n - 2; j++) {
+                // printf("t[%d] : %d\n", i, t[i]);
+                fprintf(fp, "%d ", isin_array(label_index, j, swap_node_size) ? 1 : 0);
+                if(j % image.width == 0) fprintf(fp, "\n");
+                if(j % (grids_node) == 0) fprintf(fp, "-------------------------------------\n");
+            }
+            fprintf(fp, "t: \n");
+            for (j = 1; j <= G.n - 2; j++) {
+                // printf("t[%d] : %d\n", i, t[i]);
+                fprintf(fp, "%d ", t[j]);
+                if(j % image.width == 0) fprintf(fp, "\n");
+                if(j % (grids_node) == 0) fprintf(fp, "-------------------------------------\n");
+            }
+            fprintf(fp, "label: \n");
+            for (j = 1; j <= Ge.n - 2; j++) {
+                // printf("t[%d] : %d\n", i, t[i]);
+                fprintf(fp, "%d ", newlabel[j]);
+                if(j % image.width == 0) fprintf(fp, "\n");
+                if(j % (grids_node) == 0) fprintf(fp, "-------------------------------------\n");
+            }
+
+            
+#endif
+            free(f);
+            free(t);
+            delGraph(&G);
         }
         if (flag) break;
-
-
         decreace = prev_energy - energy(&Ge, label, I, T);
+        printf("Energy : %lf\n", energy(&Ge, label, I, T));
     } while (decreace > 0);
     
 #if _OUTPUT_T_
-    for (i = 1; i <= G.n - 2; i++) {
-        // printf("t[%d] : %d\n", i, t[i]);
-        fprintf(fp, "%d ", t[i]);
-        if(i % image.width == 0) fprintf(fp, "\n");
-        if(i % (grids_node) == 0) fprintf(fp, "-------------------------------------\n");
-    }
     fprintf(fp, "result:\n");
     for (i = 1; i <= Ge.n - 2; i++) {
         fprintf(fp, "%d ", label[i]);
@@ -198,7 +226,7 @@ int main(int argc, char *argv[]) {
 
     printf("Energy (after): %lf\n", energy(&Ge, label, I, T));
     printf("Run time[%.2lf]\n", (double) (clock() - start) / CLOCKS_PER_SEC);
-
+    
     // output to bitmap file
     for (i = 0; i <  image.height; i++) {
         for (j = 0; j < image.width; j++) {
@@ -208,18 +236,18 @@ int main(int argc, char *argv[]) {
         }
     }
     WriteBmp(output_file, &output);
-
+    
 #if _OUTPUT_T_
     fprintf(fp, "Energy (after): %lf\n", energy(&Ge, label, I, T));
     fclose(fp);
 #endif
 
-    delGraph(&G);
+    
     delGraph(&Ge);
     free(I);
-    free(f);
-    free(t);
     free(label);
+    free(newlabel);
+    free(label_index);
     printf("----------------------------------------------\n");
     return 0;
     

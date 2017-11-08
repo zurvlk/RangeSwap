@@ -13,20 +13,23 @@ int isin_array(int *array, int target, int size) {
     high = size;
     low = 1;
 
-    while (low <= high) {
-        mid = (low + high) / 2;
+    // while (low <= high) {
+    //     mid = (low + high) / 2;
 
-        /* 値が見つかればループを抜ける */
-        if (array[mid] == target) {
-          return 1;
-          /* 値の大小を調べて探索範囲を狭める */
-        } else if (array[mid] < target) {
-          low = mid + 1;
-        } else {
-          high = mid - 1;
-        }
+    //     /* 値が見つかればループを抜ける */
+    //     if (array[mid] == target) {
+    //       return 1;
+    //       /* 値の大小を調べて探索範囲を狭める */
+    //     } else if (array[mid] < target) {
+    //       low = mid + 1;
+    //     } else {
+    //       high = mid - 1;
+    //     }
+    // }
+
+    for (int i = 1; i <= size; i++) {
+        if(array[i] == target) return 1;
     }
-
     return 0;
 }
 
