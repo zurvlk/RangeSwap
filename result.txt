@@ -1,54 +1,60 @@
 ----------------------------------------------
 input_file: input/barbara_noise32.bmp
+output_file: /dev/null
 label_size: 16
-Vpq(fp, fq) = |fp, fq|
+Vpq(fp, fq) = |fp - fq|
 height 100, width 75
-Energy (before): 47981.000000
+Energy (before): 23939.000000
 Energy (after): 11226.000000
 Run time[1.69]
 ----------------------------------------------
 ----------------------------------------------
 input_file: input/barbara_noise32.bmp
+output_file: /dev/null
 label_size: 32
-Vpq(fp, fq) = |fp, fq|
+Vpq(fp, fq) = |fp - fq|
 height 100, width 75
-Energy (before): 99821.000000
+Energy (before): 47809.000000
 Energy (after): 22437.000000
-Run time[6.52]
+Run time[6.93]
 ----------------------------------------------
 ----------------------------------------------
 input_file: input/barbara_noise32.bmp
+output_file: /dev/null
 label_size: 64
-Vpq(fp, fq) = |fp, fq|
+Vpq(fp, fq) = |fp - fq|
 height 100, width 75
-Energy (before): 199642.000000
+Energy (before): 95618.000000
 Energy (after): 44874.000000
-Run time[33.90]
+Run time[32.79]
 ----------------------------------------------
 ----------------------------------------------
 input_file: input/barbara_noise32.bmp
+output_file: /dev/null
 label_size: 16
-Vpq(fp, fq) = (fp, fq)^2
+Vpq(fp, fq) = (fp - fq)^2
 height 100, width 75
-Energy (before): 47981.000000
+Energy (before): 68379.000000
 Energy (after): 16055.000000
-Run time[135.17]
+Run time[135.45]
 ----------------------------------------------
 ----------------------------------------------
 input_file: input/barbara_noise32.bmp
+output_file: /dev/null
 label_size: 32
-Vpq(fp, fq) = (fp, fq)^2
+Vpq(fp, fq) = (fp - fq)^2
 height 100, width 75
-Energy (before): 99821.000000
+Energy (before): 265261.000000
 Energy (after): 34153.000000
-Run time[528.11]
+Run time[527.61]
 ----------------------------------------------
 ----------------------------------------------
 input_file: input/barbara_noise32.bmp
+output_file: /dev/null
 label_size: 64
-Vpq(fp, fq) = (fp, fq)^2
+Vpq(fp, fq) = (fp - fq)^2
 height 100, width 75
-Energy (before): 199642.000000
+Energy (before): 1061044.000000
 Energy (after): 71608.000000
-Run time[2999.33]
+Run time[2799.38]
 ----------------------------------------------

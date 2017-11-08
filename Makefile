@@ -4,13 +4,13 @@
 # CXXFLAGS = -Wall -parallel -lm -fPIC
 
 CC=gcc
-all:ishikawa
+all:rs
 
-ishikawa:graph.o bmp.o ford_fulkerson.o queue_stack.o iskw_drv.o ishikawa.o -lm
-	$(CC) graph.o bmp.o ford_fulkerson.o queue_stack.o iskw_drv.o ishikawa.o -o ishikawa -lm -g3
+rs:graph.o bmp.o ford_fulkerson.o queue_stack.o rs_drv.o rangeswap.o -lm
+	$(CC) graph.o bmp.o ford_fulkerson.o queue_stack.o rs_drv.o rangeswap.o -o rs -lm -g3
 .c.o:
 	$(CC) -c $< -Wall -l -g3
 remove:
 	rm -f *.o
 clean:
-	rm -f *.o *~ ishikawa
+	rm -f *.o *~ rs
