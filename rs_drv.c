@@ -10,13 +10,15 @@
 #define _OUTPUT_T_ 1     // BK-maxflow後のtの状態をファイルに出力 0:出力しない 1:出力する
 #define _OUTPUT_INFO_ 0     // デバッグ情報出力 0:出力しない 1:出力する
 #define _OUTPUT_GRAPH_ 0    // グラフ情報出力  0:出力しない 1:出力する
+#define _OUTPUT_PROGRESS_ 1 // 処理過程ファイル出力 0:出力しない 1:出力する
+#define _RUN_FIRST_ONLY_ 0 //1度目の移動で終了(デバッグ用)
 
 int main(int argc, char *argv[]) {
     int i, j, k, node, edge, grids_node, flag, alpha, beta, swap_node_size;
     int scale, label_max, grids_edge, count, last_move, num_of_moves;
     int *I, *t, *label, *newlabel, *label_index;
     // I->入力画像の輝度, t->2値変数, label->ラベル付け
-    int label_size = 16;
+    int label_size = 8;
     int range_size = 4;
     double decreace, prev_energy, T = 255;
     double *f;
@@ -37,6 +39,11 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "cannot open file[t.txt]\n");
         exit (EXIT_FAILURE);
     }
+#endif
+#if _OUTPUT_PROGRESS_
+    int l = 0;
+    char pf[100];
+    system("rm output/*.bmp &> /dev/null");
 #endif
 
     if (argc != 2 && argc != 4) {
@@ -176,7 +183,7 @@ int main(int argc, char *argv[]) {
             newGraph(&G, node, edge);
             set_edge(&G, image.height, image.width, alpha, beta, label_size, label, label_index, swap_node_size, I);
             initAdjList(&G);
-
+            
             if ((f = (double *) malloc(sizeof(double) * (G.m + 1))) == NULL) {
                 fprintf(stderr, "main(): ERROR [f = malloc()]\n");
                 return (EXIT_FAILURE);
@@ -226,10 +233,27 @@ int main(int argc, char *argv[]) {
 
             
 #endif
+#if _OUTPUT_PROGRESS_
+            for (j = 0; j <  image.height; j++) {
+                for (k = 0; k < image.width; k++) {
+                    output.data[j][k].r = label[j * image.width + k + 1] * scale;
+                    output.data[j][k].g = output.data[j][k].r;
+                    output.data[j][k].b = output.data[j][k].r;
+                }
+            }
+            sprintf(pf, "output/image_%04d.bmp", l);
+            WriteBmp(pf, &output);
+            l++;
+#endif
             // showGraph(&G);
             free(f);
             free(t);
             delGraph(&G);
+
+#if _RUN_FIRST_ONLY_
+            flag = 1;
+            break;
+ #endif
         }
         if (flag) break;
         decreace = prev_energy - energy(&Ge, label, I, T);
