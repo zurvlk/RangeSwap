@@ -257,7 +257,7 @@ void set_edge(Graph *G, int height, int width, int alpha, int beta, int label_si
     // i1~ik-1->sink
     for (i = 1; i <= (range_size - 1) * grids_node; i++) {
         setEdge(G, edge_count, i, sink, 0);
-        node = i % grids_node == 0 ? i : i % grids_node;
+        node = i % grids_node == 0 ? grids_node : i % grids_node;
         if(isin_array(label_index, node, size)) {
             G->capa[edge_count] = e_cost((i - 1) / grids_node + 1, sink_label);
         }
@@ -401,7 +401,7 @@ void set_edge(Graph *G, int height, int width, int alpha, int beta, int label_si
     // each node 2 source 
     for (i = 1; i <= grids_node * range_size; i++) {
         setEdge(G, edge_count, i, source, 0);
-        node = i % grids_node == 0 ? i : i % grids_node;
+        node = i % grids_node == 0 ? grids_node : i % grids_node;
         if(isin_array(label_index, node, size)) {
             G->capa[edge_count] = e_cost(0, (i - 1) / grids_node + 1);
         }
@@ -410,7 +410,7 @@ void set_edge(Graph *G, int height, int width, int alpha, int beta, int label_si
      // each node 2 sink
     for (i = 1; i <= grids_node * range_size; i++) {
         setEdge(G, edge_count, sink, i, 0);
-        node = i % grids_node == 0 ? i : i % grids_node;
+        node = i % grids_node == 0 ? grids_node : i % grids_node;
         if(isin_array(label_index, node, size)) {
             G->capa[edge_count] = e_cost((i - 1) / grids_node + 1, sink_label);
         }
