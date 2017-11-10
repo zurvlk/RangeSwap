@@ -11,14 +11,15 @@
 #define _OUTPUT_INFO_ 0     // デバッグ情報出力 0:出力しない 1:出力する
 #define _OUTPUT_GRAPH_ 0    // グラフ情報出力  0:出力しない 1:出力する
 #define _OUTPUT_PROGRESS_ 1 // 処理過程ファイル出力 0:出力しない 1:出力する
-#define _RUN_FIRST_ONLY_ 0 //1度目の移動で終了(デバッグ用)
+#define _RUN_FIRST_ONLY_ 0 // 1度目の移動で終了(デバッグ用)
+#define _SHOW_EACH_ENERGY_ 1 // 各移動時にエネルギー表示
 
 int main(int argc, char *argv[]) {
     int i, j, k, node, edge, grids_node, flag, alpha, beta, swap_node_size;
     int scale, label_max, grids_edge, count, last_move, num_of_moves;
     int *I, *t, *label, *newlabel, *label_index;
     // I->入力画像の輝度, t->2値変数, label->ラベル付け
-    int label_size = 8;
+    int label_size = 16;
     int range_size = 4;
     double decreace, prev_energy, T = 255;
     double *f;
@@ -140,20 +141,11 @@ int main(int argc, char *argv[]) {
         for(i = 0; i < num_of_moves; i++) {
             alpha = i;
             beta = alpha + range_size - 1;
-            printf("alpha: %d beta: %d\n", alpha, beta);
             if (last_move == i) {
                 flag = 1;
                 break;
             }
             swap_node_size = make_label_index(&Ge, label, label_index, alpha, beta);
-           
-            // for (j = 1; j <= Ge.n - 2; j++) {
-            //     // printf("t[%d] : %d\n", i, t[i]);
-            //     printf("%d ", isin_array(label_index, j, swap_node_size) ? 1 : 0);
-            //     if(j % image.width == 0) printf("\n");
-            //     if(j % (grids_node) == 0) printf("-------------------------------------\n");
-            // }
-
             if (swap_node_size  < 2) continue;
 
 #if _OUTPUT_T_
@@ -210,9 +202,19 @@ int main(int argc, char *argv[]) {
             }
 
             if (cmparray(newlabel, label, grids_node)) {
-                last_move = alpha;
-                cpyarray(label, newlabel, grids_node);
-                printf("Energy : %lf\n", energy(&Ge, label, I, T));
+                
+                if (energy(&Ge, newlabel, I, T) < energy(&Ge, label, I, T)) {
+                    last_move = alpha;
+                    cpyarray(label, newlabel, grids_node);
+#if _SHOW_EACH_ENERGY_
+                    printf("alpha: %d beta: %d\n", alpha, beta);
+                    printf("Energy : %lf\n", energy(&Ge, label, I, T));
+#endif
+                } else {
+                    fprintf(stderr, "Error newEnergy > prevEnergy\n");
+                    exit (EXIT_FAILURE);
+                }
+                
             }
 
 #if _OUTPUT_T_
@@ -230,9 +232,8 @@ int main(int argc, char *argv[]) {
                 if(j % image.width == 0) fprintf(fp, "\n");
                 if(j % (grids_node) == 0) fprintf(fp, "-------------------------------------\n");
             }
-
-            
 #endif
+
 #if _OUTPUT_PROGRESS_
             for (j = 0; j <  image.height; j++) {
                 for (k = 0; k < image.width; k++) {
@@ -257,7 +258,9 @@ int main(int argc, char *argv[]) {
         }
         if (flag) break;
         decreace = prev_energy - energy(&Ge, label, I, T);
+#if _SHOW_EACH_ENERGY_
         printf("Energy : %lf\n", energy(&Ge, label, I, T));
+#endif
     } while (decreace > 0);
     
 #if _OUTPUT_T_
