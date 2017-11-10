@@ -8,7 +8,6 @@
 #define INF DBL_MAX
 
 int isin_array(int *array, int target, int size) {
-
     for (int i = 1; i <= size; i++) {
         if(array[i] > target) break;
         if(array[i] == target) return 1;
@@ -64,7 +63,6 @@ double data(int *I, int a, double i) {
 double d_p(int label, int i, int alpha) {
     return dabs(label, (i + alpha));
 }
-
 
 double energy(Graph *G, int *label, int *I, double T) {
     int i;
@@ -160,7 +158,7 @@ int r_4_rangeswap(int i, int li, int height, int width, int label_size, int *lab
             // iの上の点がalpha-beta間に含まれる
             r_total -= r(li, k, 1);
         } else {
-            // iの上の点がalpha-beta間に含まれる
+            // iの上の点がalpha-beta間に含まれない-= r(li, k, 1);
             r_total += h(li + alpha - label[i - width]);
         }
     }
@@ -169,10 +167,10 @@ int r_4_rangeswap(int i, int li, int height, int width, int label_size, int *lab
     if (i < grids_node - width) {
         // 画素が一番下の行に存在しないとき(iの下が空白でないとき)
         if (isin_array(label_index, i + width, index_size)){
-            // iの下の点がalpha-beta間に含まれる
+            // iの下の点がalpha-beta間に含まない
             r_total -= r(li, k, 1);
         } else {
-            // iの下の点がalpha-beta間に含まれる
+            // iの下の点がalpha-beta間に含まれない
             r_total += h(li + alpha -  label[i + width]);
         }
     }
@@ -183,22 +181,21 @@ int r_4_rangeswap(int i, int li, int height, int width, int label_size, int *lab
             // iの左の点がalpha-beta間に含まれる
             r_total -= r(li, k, 1);
         } else {
-            // iの左の点がalpha-beta間に含まれる
+            // iの左の点がalpha-beta間に含まれない
             r_total += h(li + alpha -  label[i - 1]);
         }
     }
 
-    if ((i % width) != 1) {
+    if ((i % width) != 0) {
         // 画素が一番右の列に存在しないとき(iの右が空白でないとき)
         if (isin_array(label_index, i + 1, index_size)){
             // iの右の点がalpha-beta間に含まれる
             r_total -= r(li, k, 1);
         } else {
-            // iの右の点がalpha-beta間に含まれる
+            // iの右の点がalpha-beta間に含まれない
             r_total += h(li + alpha - label[i + 1]);
         }
     }
-
     return r_total;
 }
 
@@ -237,7 +234,7 @@ void set_edge(Graph *G, int height, int width, int alpha, int beta, int label_si
         if(isin_array(label_index, i, size)) {
             r_total = r_4_rangeswap(i, 0, height, width, label_size, label_index, label, size, alpha, beta);
             // G->capa[edge_count] = data(I, i, alpha) - r0 + e_cost(alpha, alpha + 1);
-            G->capa[edge_count] = d_p(label[i], 0, alpha) + r_total;
+            G->capa[edge_count] = d_p(label[i], 0, alpha) + r_total + e_cost(0, 1);
         }
         
         if (min[i] > G->capa[edge_count]) min[i] = G->capa[edge_count];

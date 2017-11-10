@@ -47,8 +47,8 @@ int main(int argc, char *argv[]) {
     system("rm output/*.bmp &> /dev/null");
 #endif
 
-    if (argc != 2 && argc != 5) {
-        printf("Usage: %s <input_file> <output_file(option)> <label_size(option)> <range_size(option)> <Vpq(fp, fq) 0:|fp - fq| 1:(fp - f_q)^2 (option)>\n", argv[0]);
+    if (argc != 2 && argc != 3 && argc != 6) {
+        printf("Usage: %s <input_file> <output_file(option)> <label_size(option)> <range_size(option)> <Vpq(fp, fq) 0:|fp - fq| 1 :(fp - f_q)^2 (option)>\n", argv[0]);
         return 1;
     }
     function = 0;
@@ -66,11 +66,16 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Error! Range size == %d \n", range_size);
         exit (EXIT_FAILURE);
     }
+    if (label_size < range_size) {
+        fprintf(stderr, "Error! label_size < range_size \n");
+        exit (EXIT_FAILURE);
+    }
 
     printf("----------------------------------------------\n");
     printf("input_file: %s\n", argv[1]);
     printf("output_file: %s\n", output_file);
     printf("label_size: %d\n", label_size);
+    printf("range_size: %d\n", range_size);
     if(h(2) > 2) printf("Vpq(fp, fq) = (fp - fq)^2\n");
     else printf("Vpq(fp, fq) = |fp - fq|\n");
 
@@ -215,10 +220,9 @@ int main(int argc, char *argv[]) {
                     printf("Energy : %lf\n", energy(&Ge, label, I, T));
 #endif
                 } else {
-                    // fprintf(stderr, "Error newEnergy > prevEnergy\n");
-                    // exit (EXIT_FAILURE);
+                    fprintf(stderr, "Error newEnergy > prevEnergy\n");
+                    exit (EXIT_FAILURE);
                 }
-                
             }
 
 #if _OUTPUT_T_
