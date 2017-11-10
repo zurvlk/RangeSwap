@@ -21,6 +21,7 @@ int main(int argc, char *argv[]) {
     // I->入力画像の輝度, t->2値変数, label->ラベル付け
     int label_size = 16;
     int range_size = 4;
+    int errlog = 0;
     double decreace, prev_energy, T = 255;
     double *f;
     char output_file[100];
@@ -125,7 +126,7 @@ int main(int argc, char *argv[]) {
     for (i = 1; i <= grids_node ; i++) label[i] = I[i];
     cpyarray(newlabel, label, grids_node);
     prev_energy = energy(&Ge, label, I, T);
-    printf("Energy (before): %lf\n", prev_energy);
+    printf("Energy (before): %.0lf\n", prev_energy);
 
 
 #if _OUTPUT_T_
@@ -220,8 +221,9 @@ int main(int argc, char *argv[]) {
                     printf("Energy : %lf\n", energy(&Ge, label, I, T));
 #endif
                 } else {
-                    fprintf(stderr, "Error newEnergy > prevEnergy\n");
-                    exit (EXIT_FAILURE);
+                    errlog = 1;
+                    // fprintf(stderr, "Error newEnergy > prevEnergy\n");
+                    // exit (EXIT_FAILURE);
                 }
             }
 
@@ -267,7 +269,7 @@ int main(int argc, char *argv[]) {
         if (flag) break;
         decreace = prev_energy - energy(&Ge, label, I, T);
 #if _SHOW_EACH_ENERGY_
-        printf("Energy : %lf\n", energy(&Ge, label, I, T));
+        printf("Energy : %.0lf\n", energy(&Ge, label, I, T));
 #endif
     } while (decreace > 0);
     
@@ -279,7 +281,7 @@ int main(int argc, char *argv[]) {
     }
 #endif
 
-    printf("Energy (after): %lf\n", energy(&Ge, label, I, T));
+    printf("Energy (after): %.0lf\n", energy(&Ge, label, I, T));
     printf("Run time[%.2lf]\n", (double) (clock() - start) / CLOCKS_PER_SEC);
     
     // output to bitmap file
@@ -296,7 +298,7 @@ int main(int argc, char *argv[]) {
     fprintf(fp, "Energy (after): %lf\n", energy(&Ge, label, I, T));
     fclose(fp);
 #endif
-
+    if(errlog) printf("エネルギーが増大する移動が確認されました\n");
     
     delGraph(&Ge);
     free(I);

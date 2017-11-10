@@ -1,0 +1,4 @@
+@zurvlk 処理1が完了しましたっ!
+Vpq(fp,fq) = |fp - fq|
+label_size: 16 range_size: 4
+Energy (before): 23939.000000

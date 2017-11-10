@@ -1,0 +1,8 @@
+----------------------------------------------
+input_file: input/barbara_noise32.bmp
+output_file: output/output_0_16_4.bmp
+label_size: 16
+range_size: 4
+Vpq(fp, fq) = |fp - fq|
+height 100, width 75
+Energy (before): 23939.000000
