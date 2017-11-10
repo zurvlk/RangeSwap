@@ -7,12 +7,12 @@
 #include "graph.h"
 #include "ford_fulkerson.h"
 
-#define _OUTPUT_T_ 1     // BK-maxflow後のtの状態をファイルに出力 0:出力しない 1:出力する
+#define _OUTPUT_T_ 0     // BK-maxflow後のtの状態をファイルに出力 0:出力しない 1:出力する
 #define _OUTPUT_INFO_ 0     // デバッグ情報出力 0:出力しない 1:出力する
 #define _OUTPUT_GRAPH_ 0    // グラフ情報出力  0:出力しない 1:出力する
-#define _OUTPUT_PROGRESS_ 1 // 処理過程ファイル出力 0:出力しない 1:出力する
+#define _OUTPUT_PROGRESS_ 0 // 処理過程ファイル出力 0:出力しない 1:出力する
 #define _RUN_FIRST_ONLY_ 0 // 1度目の移動で終了(デバッグ用)
-#define _SHOW_EACH_ENERGY_ 1 // 各移動時にエネルギー表示
+#define _SHOW_EACH_ENERGY_ 0 // 各移動時にエネルギー表示
 
 int main(int argc, char *argv[]) {
     int i, j, k, node, edge, grids_node, flag, alpha, beta, swap_node_size;
@@ -47,14 +47,18 @@ int main(int argc, char *argv[]) {
     system("rm output/*.bmp &> /dev/null");
 #endif
 
-    if (argc != 2 && argc != 4) {
-        printf("Usage: %s <input_file> <output_file(option)> <label_size(option)>\n", argv[0]);
+    if (argc != 2 && argc != 5) {
+        printf("Usage: %s <input_file> <output_file(option)> <label_size(option)> <range_size(option)> <Vpq(fp, fq) 0:|fp - fq| 1:(fp - f_q)^2 (option)>\n", argv[0]);
         return 1;
     }
-
+    function = 0;
     if (argc == 2) strcpy(output_file, "/dev/null");
     else strcpy(output_file, argv[2]);
-    if (argc == 4) label_size = atoi(argv[3]);
+    if (argc == 6) {
+        label_size = atoi(argv[3]);
+        range_size = atoi(argv[4]);
+        function = atoi(argv[5]);
+    }
 
     label_max = label_size - 1;
     scale = 256 / label_size;
@@ -211,8 +215,8 @@ int main(int argc, char *argv[]) {
                     printf("Energy : %lf\n", energy(&Ge, label, I, T));
 #endif
                 } else {
-                    fprintf(stderr, "Error newEnergy > prevEnergy\n");
-                    exit (EXIT_FAILURE);
+                    // fprintf(stderr, "Error newEnergy > prevEnergy\n");
+                    // exit (EXIT_FAILURE);
                 }
                 
             }

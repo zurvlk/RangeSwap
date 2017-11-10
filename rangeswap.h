@@ -1,6 +1,8 @@
 #include "graph.h"
 #include "bmp.h"
 
+int function;
+
 double h(double n);
 double p(int *label, int height, int width);
 double energy(Graph *G, int *label, int *I, double T);

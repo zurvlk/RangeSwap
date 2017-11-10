@@ -36,11 +36,10 @@ void cpyarray(int *terget, int *source, int size) {
 }
 
 double h(double n) {
-    //*
-    return n > 0 ? n : -n;
-    /*/
-    return n * n;
-    // */
+
+    if(!function) return n > 0 ? n : -n;
+    else return n * n;
+
 }
 
 double dabs(double a, double b) {
@@ -73,7 +72,7 @@ double energy(Graph *G, int *label, int *I, double T) {
     //* Dterm
     for (i = 1; i <= G->n - 2; i++) {
         energy += data(I, i, label[i]);
-    }
+    }label_size
     // */
     // Vterm
     for (i = 1; i <= G->m - 2 * (G->n - 2); i++) {
@@ -110,7 +109,7 @@ void set_single_edges(Graph *G, int height, int width) {
             setEdge(G, edge_count, tail, head, 0);
             edge_count++;
         }
-    }
+    }label_size
  
     //点と点の間の枝（縦）
     for (i = 1; i < height ; i++){
@@ -125,7 +124,7 @@ void set_single_edges(Graph *G, int height, int width) {
     //sourceと点の間の枝
     for (i = 1; i < height * width + 1; i++){
        setEdge(G, edge_count, G->src, i, 0);
-       edge_count++;
+       edge_count++;label_size
     }
     
     //点とsinkの間の枝
@@ -152,7 +151,7 @@ int make_label_index(Graph *G, int *label, int *label_index, int alpha, int beta
 int r_4_rangeswap(int i, int li, int height, int width, int label_size, int *label_index, int *label, int index_size, int alpha, int beta) {
     int grids_node = height * width;
 
-    double r_total = 0;
+    double r_total = 0;label_size
     double k = dabs(alpha, beta);
 
     if (i > width) {
