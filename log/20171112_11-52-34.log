@@ -1,0 +1,23 @@
+----------------------------------------------
+input_file: input/barbara_noise32.bmp
+output_file: output/output_1_32_16.bmp
+label_size: 32
+range_size: 16
+Vpq(fp, fq) = (fp - fq)^2
+height 100, width 75
+Energy (before): 265261
+Energy (after): 24537
+Run time[5992.28]
+エネルギーが増大する移動が確認されました
+----------------------------------------------
+----------------------------------------------
+input_file: input/barbara_noise32.bmp
+output_file: output/output_1_32_32.bmp
+label_size: 32
+range_size: 32
+Vpq(fp, fq) = (fp - fq)^2
+height 100, width 75
+Energy (before): 265261
+Energy (after): 24215
+Run time[1112.44]
+----------------------------------------------
