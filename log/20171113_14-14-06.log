@@ -1,0 +1,60 @@
+----------------------------------------------
+input_file: input/barbara_noise32.bmp
+output_file: output/output_1_16_8.bmp
+label_size: 16
+range_size: 8
+Vpq(fp, fq) = (fp - fq)^2
+height 100, width 75
+Energy (before): 68379
+Energy (after): 11661
+Italation: 27
+Run time[1084.71]
+----------------------------------------------
+----------------------------------------------
+input_file: input/barbara_noise32.bmp
+output_file: output/output_1_16_16.bmp
+label_size: 16
+range_size: 16
+Vpq(fp, fq) = (fp - fq)^2
+height 100, width 75
+Energy (before): 68379
+Energy (after): 11521
+Italation: 1
+Run time[289.01]
+----------------------------------------------
+----------------------------------------------
+input_file: input/barbara_noise32.bmp
+output_file: output/output_1_32_8.bmp
+label_size: 32
+range_size: 8
+Vpq(fp, fq) = (fp - fq)^2
+height 100, width 75
+Energy (before): 265261
+Energy (after): 27650
+Italation: 58
+Run time[980.26]
+----------------------------------------------
+----------------------------------------------
+input_file: input/barbara_noise32.bmp
+output_file: output/output_1_32_16.bmp
+label_size: 32
+range_size: 16
+Vpq(fp, fq) = (fp - fq)^2
+height 100, width 75
+Energy (before): 265261
+Energy (after): 24525
+Italation: 38
+Run time[6869.65]
+----------------------------------------------
+----------------------------------------------
+input_file: input/barbara_noise32.bmp
+output_file: output/output_1_32_32.bmp
+label_size: 32
+range_size: 32
+Vpq(fp, fq) = (fp - fq)^2
+height 100, width 75
+Energy (before): 265261
+Energy (after): 24196
+Italation: 1
+Run time[1149.75]
+----------------------------------------------
